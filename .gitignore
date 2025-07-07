@@ -1,1 +1,42 @@
-/.vscode
+# Node.js
+node_modules/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Build outputs
+.next/
+dist/
+coverage/
+build/
+*.tsbuildinfo
+
+# Env files
+.env*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+
+# Misc
+.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# Static site generators
+out/
+
+# TypeScript
+next-env.d.ts
