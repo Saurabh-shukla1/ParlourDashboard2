@@ -42,7 +42,7 @@ export function useAuth(requiredRole?: string) {
       }
 
       setUser(userData);
-    } catch (error) {
+    } catch (_error) {
       // Invalid token
       localStorage.removeItem('token');
       router.replace('/login');
@@ -77,7 +77,7 @@ export function useAuthRedirect() {
         } else {
           router.replace('/dashboard');
         }
-      } catch (error) {
+      } catch (_error) {
         // Invalid token, clear it
         localStorage.removeItem('token');
       }
