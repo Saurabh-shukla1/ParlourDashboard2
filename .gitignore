@@ -18,6 +18,8 @@ lerna-debug.log*
 # Build outputs
 .next/
 dist/
+*/dist/
+**/dist/
 coverage/
 build/
 *.tsbuildinfo
