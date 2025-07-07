@@ -29,10 +29,32 @@ app.use(express.json());
 const PORT = process.env.PORT || 5000;
 const MONGODB_URI = process.env.MONGODB_URI || '';
 
+// Validate required environment variables
+if (!MONGODB_URI) {
+  console.error('❌ MONGODB_URI environment variable is required');
+  console.error('Please set MONGODB_URI in your environment variables');
+  process.exit(1);
+}
+
+console.log('🚀 Starting server...');
+console.log('📡 Port:', PORT);
+console.log('🌐 CORS Origin:', process.env.CORS_ORIGIN || '*');
+console.log('🗄️  MongoDB URI:', MONGODB_URI ? 'Configured ✅' : 'Missing ❌');
+
+console.log('🚀 Starting server...');
+console.log('📡 Port:', PORT);
+console.log('🌐 CORS Origin:', process.env.CORS_ORIGIN || '*');
+console.log('🗄️  MongoDB URI:', MONGODB_URI ? 'Configured ✅' : 'Missing ❌');
+
 // MongoDB connection
 mongoose.connect(MONGODB_URI)
-  .then(() => console.log('MongoDB connected'))
-  .catch((err) => console.error('MongoDB connection error:', err));
+  .then(() => {
+    console.log('✅ MongoDB connected successfully');
+  })
+  .catch((err) => {
+    console.error('❌ MongoDB connection error:', err.message);
+    process.exit(1);
+  });
 
 // Health check route
 app.get('/api/health', (req, res) => {
@@ -54,5 +76,28 @@ const io = new SocketIOServer(server, {
 app.set('io', io);
 
 server.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`🎉 Server running successfully on port ${PORT}`);
+  console.log(`🔗 Health check: http://localhost:${PORT}/api/health`);
+});
+
+// Handle graceful shutdown
+process.on('SIGTERM', () => {
+  console.log('🛑 SIGTERM received, shutting down gracefully...');
+  server.close(() => {
+    console.log('✅ Server closed');
+    mongoose.connection.close().then(() => {
+      console.log('✅ MongoDB connection closed');
+      process.exit(0);
+    });
+  });
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('❌ Unhandled Rejection at:', promise, 'reason:', reason);
+  process.exit(1);
+});
+
+process.on('uncaughtException', (error) => {
+  console.error('❌ Uncaught Exception:', error);
+  process.exit(1);
 }); 
