@@ -15,7 +15,15 @@ import attendanceRoutes from './routes/attendance';
 dotenv.config();
 
 const app = express();
-app.use(cors());
+
+// CORS configuration
+const corsOptions = {
+  origin: process.env.CORS_ORIGIN || '*',
+  credentials: true,
+  optionsSuccessStatus: 200
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 
 const PORT = process.env.PORT || 5000;
@@ -37,7 +45,12 @@ app.use('/api/tasks', taskRoutes);
 app.use('/api/attendance', attendanceRoutes);
 
 const server = http.createServer(app);
-const io = new SocketIOServer(server, { cors: { origin: '*' } });
+const io = new SocketIOServer(server, { 
+  cors: { 
+    origin: process.env.CORS_ORIGIN || '*',
+    credentials: true
+  } 
+});
 app.set('io', io);
 
 server.listen(PORT, () => {
