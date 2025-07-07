@@ -63,7 +63,7 @@ export default function TasksSection() {
       } catch {}
     }
     fetchData();
-    // eslint-disable-next-line
+     
   }, []);
 
   // Add Task

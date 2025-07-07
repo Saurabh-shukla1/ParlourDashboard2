@@ -31,7 +31,6 @@ This guide will help you deploy your Parlour Management System (Backend API + Fr
    - **Environment**: `Node`
    - **Build Command**: `npm install && npm run build`
    - **Start Command**: `npm start`
-   - **Node Version**: `18` (recommended)
 6. **Environment Variables** (click "Advanced"):
    ```
    PORT=10000
@@ -190,35 +189,6 @@ npm install
 npm run build
 npm start
 ```
-
-## Important Note: TypeScript Build Issues
-
-Since your backend uses TypeScript, deployment platforms need to install devDependencies to build the project. Here are the correct solutions:
-
-### Solution 1: Use npm install (Recommended)
-This ensures all dependencies (including devDependencies like TypeScript) are installed:
-```bash
-npm install && npm run build
-```
-
-### Solution 2: Alternative Build Commands
-If the above doesn't work, try these:
-- `npm ci && npm run build` (if package-lock.json exists)
-- `npm install --legacy-peer-deps && npm run build`
-- `npm install --force && npm run build`
-
-### Solution 3: Two-stage approach
-Some platforms support this pattern:
-```bash
-# Install all dependencies
-npm install
-# Build the project
-npm run build
-# Start the server
-npm start
-```
-
-**Note**: Removed the problematic `postinstall` script that was causing build failures.
 
 ## Alternative Deployment Options
 

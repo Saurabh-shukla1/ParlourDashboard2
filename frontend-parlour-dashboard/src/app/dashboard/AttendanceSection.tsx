@@ -46,7 +46,7 @@ export default function AttendanceSection() {
     return () => {
       socket?.off("attendance_update");
     };
-    // eslint-disable-next-line
+     
   }, []);
 
   return (

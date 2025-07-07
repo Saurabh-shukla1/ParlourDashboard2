@@ -59,7 +59,7 @@ export default function AttendancePage() {
     return () => {
       socket?.off("attendance_update");
     };
-    // eslint-disable-next-line
+     
   }, []);
 
   // Get last punch type for employee

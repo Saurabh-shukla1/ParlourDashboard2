@@ -47,7 +47,7 @@ export default function LoginPage() {
       } else {
         setError("Unknown role");
       }
-    } catch (err) {
+    } catch (_err) {
       setError("Network error");
     } finally {
       setLoading(false);

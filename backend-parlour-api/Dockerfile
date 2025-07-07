@@ -7,17 +7,14 @@ WORKDIR /app
 COPY package*.json ./
 COPY tsconfig.json ./
 
-# Install ALL dependencies (including devDependencies for TypeScript)
-RUN npm ci
+# Install dependencies
+RUN npm ci --only=production
 
 # Copy source code
 COPY src ./src
 
 # Build the application
 RUN npm run build
-
-# Remove devDependencies after build to reduce image size
-RUN npm prune --production
 
 # Expose port
 EXPOSE 3001
