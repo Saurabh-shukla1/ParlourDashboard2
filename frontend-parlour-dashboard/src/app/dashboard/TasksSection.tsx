@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import TaskDialog from "../../components/TaskDialog";
 import ConfirmDialog from "../../components/ConfirmDialog";
+import { API_BASE_URL } from "../../lib/config";
 
 interface Employee {
   _id: string;
@@ -38,8 +39,8 @@ export default function TasksSection() {
     const token = localStorage.getItem("token");
     try {
       const [tasksRes, employeesRes] = await Promise.all([
-        fetch("http://localhost:5000/api/tasks", { headers: { Authorization: `Bearer ${token}` } }),
-        fetch("http://localhost:5000/api/employees", { headers: { Authorization: `Bearer ${token}` } }),
+        fetch(`${API_BASE_URL}/tasks`, { headers: { Authorization: `Bearer ${token}` } }),
+        fetch(`${API_BASE_URL}/employees`, { headers: { Authorization: `Bearer ${token}` } }),
       ]);
       const tasksData = await tasksRes.json();
       const employeesData = await employeesRes.json();
@@ -72,7 +73,7 @@ export default function TasksSection() {
     setError("");
     const token = localStorage.getItem("token");
     try {
-      const res = await fetch("http://localhost:5000/api/tasks", {
+      const res = await fetch(`${API_BASE_URL}/tasks`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -101,7 +102,7 @@ export default function TasksSection() {
     setError("");
     const token = localStorage.getItem("token");
     try {
-      const res = await fetch(`http://localhost:5000/api/tasks/${editTask._id}`, {
+      const res = await fetch(`${API_BASE_URL}/tasks/${editTask._id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -131,7 +132,7 @@ export default function TasksSection() {
     setError("");
     const token = localStorage.getItem("token");
     try {
-      const res = await fetch(`http://localhost:5000/api/tasks/${deleteTask._id}`, {
+      const res = await fetch(`${API_BASE_URL}/tasks/${deleteTask._id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -202,4 +203,4 @@ export default function TasksSection() {
       <ConfirmDialog open={showDelete} onOpenChange={setShowDelete} onConfirm={handleDelete} loading={actionLoading} message={`Are you sure you want to delete '${deleteTask?.title}'?`} />
     </div>
   );
-} 
+}

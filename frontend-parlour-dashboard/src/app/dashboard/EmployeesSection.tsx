@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import EmployeeDialog from "../../components/EmployeeDialog";
 import ConfirmDialog from "../../components/ConfirmDialog";
+import { API_BASE_URL } from "../../lib/config";
 
 interface Employee {
   _id: string;
@@ -28,7 +29,7 @@ export default function EmployeesSection() {
     setError("");
     const token = localStorage.getItem("token");
     try {
-      const res = await fetch("http://localhost:5000/api/employees", {
+      const res = await fetch(`${API_BASE_URL}/employees`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -63,7 +64,7 @@ export default function EmployeesSection() {
     setError("");
     const token = localStorage.getItem("token");
     try {
-      const res = await fetch("http://localhost:5000/api/employees", {
+      const res = await fetch(`${API_BASE_URL}/employees`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -92,7 +93,7 @@ export default function EmployeesSection() {
     setError("");
     const token = localStorage.getItem("token");
     try {
-      const res = await fetch(`http://localhost:5000/api/employees/${editEmployee._id}`, {
+      const res = await fetch(`${API_BASE_URL}/employees/${editEmployee._id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -122,7 +123,7 @@ export default function EmployeesSection() {
     setError("");
     const token = localStorage.getItem("token");
     try {
-      const res = await fetch(`http://localhost:5000/api/employees/${deleteEmployee._id}`, {
+      const res = await fetch(`${API_BASE_URL}/employees/${deleteEmployee._id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -191,4 +192,4 @@ export default function EmployeesSection() {
       <ConfirmDialog open={showDelete} onOpenChange={setShowDelete} onConfirm={handleDelete} loading={actionLoading} message={`Are you sure you want to delete ${deleteEmployee?.name}?`} />
     </div>
   );
-} 
+}

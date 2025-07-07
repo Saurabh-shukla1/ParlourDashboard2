@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { io, Socket } from "socket.io-client";
+import { API_BASE_URL, SOCKET_URL } from "@/lib/config";
 
 interface AttendanceLog {
   _id: string;
@@ -21,7 +22,7 @@ export default function AttendanceSection() {
     setError("");
     const token = localStorage.getItem("token");
     try {
-      const res = await fetch("http://localhost:5000/api/attendance", {
+      const res = await fetch(`${API_BASE_URL}/api/attendance`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -38,7 +39,7 @@ export default function AttendanceSection() {
     fetchLogs();
     // Setup WebSocket
     if (!socket) {
-      socket = io("http://localhost:5000");
+      socket = io(SOCKET_URL);
     }
     socket.on("attendance_update", ({ log }) => {
       setLogs((prev) => [log, ...prev]);

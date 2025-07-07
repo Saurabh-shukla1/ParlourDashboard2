@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { io, Socket } from "socket.io-client";
+import { API_BASE_URL, SOCKET_URL } from "@/lib/config";
 
 interface Employee {
   _id: string;
@@ -32,8 +33,8 @@ export default function AttendancePage() {
     const token = localStorage.getItem("token");
     try {
       const [empRes, logRes] = await Promise.all([
-        fetch("http://localhost:5000/api/employees", { headers: { Authorization: `Bearer ${token}` } }),
-        fetch("http://localhost:5000/api/attendance", { headers: { Authorization: `Bearer ${token}` } }),
+        fetch(`${API_BASE_URL}/api/employees`, { headers: { Authorization: `Bearer ${token}` } }),
+        fetch(`${API_BASE_URL}/api/attendance`, { headers: { Authorization: `Bearer ${token}` } }),
       ]);
       const empData = await empRes.json();
       const logData = await logRes.json();
@@ -51,7 +52,7 @@ export default function AttendancePage() {
   useEffect(() => {
     fetchData();
     if (!socket) {
-      socket = io("http://localhost:5000");
+      socket = io(SOCKET_URL);
     }
     socket.on("attendance_update", ({ log }: { log: AttendanceLog }) => {
       setLogs((prev) => [log, ...prev]);
@@ -74,7 +75,7 @@ export default function AttendancePage() {
     setError("");
     const token = localStorage.getItem("token");
     try {
-      const res = await fetch("http://localhost:5000/api/attendance/punch", {
+      const res = await fetch(`${API_BASE_URL}/api/attendance/punch`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
