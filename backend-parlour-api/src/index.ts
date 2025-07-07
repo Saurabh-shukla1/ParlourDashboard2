@@ -18,7 +18,22 @@ const app = express();
 
 // CORS configuration
 const corsOptions = {
-  origin: process.env.CORS_ORIGIN || '*',
+  origin: (origin: string | undefined, callback: (error: Error | null, allow?: boolean) => void) => {
+    const allowedOrigins = process.env.CORS_ORIGIN?.split(',') || ['*'];
+    
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    // If CORS_ORIGIN is '*', allow all origins
+    if (allowedOrigins.includes('*')) return callback(null, true);
+    
+    // Check if the origin is in the allowed list
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    } else {
+      return callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
   optionsSuccessStatus: 200
 };
@@ -31,28 +46,23 @@ const MONGODB_URI = process.env.MONGODB_URI || '';
 
 // Validate required environment variables
 if (!MONGODB_URI) {
-  console.error('❌ MONGODB_URI environment variable is required');
+  console.error('MONGODB_URI environment variable is required');
   console.error('Please set MONGODB_URI in your environment variables');
   process.exit(1);
 }
 
-console.log('🚀 Starting server...');
-console.log('📡 Port:', PORT);
-console.log('🌐 CORS Origin:', process.env.CORS_ORIGIN || '*');
-console.log('🗄️  MongoDB URI:', MONGODB_URI ? 'Configured ✅' : 'Missing ❌');
-
-console.log('🚀 Starting server...');
-console.log('📡 Port:', PORT);
-console.log('🌐 CORS Origin:', process.env.CORS_ORIGIN || '*');
-console.log('🗄️  MongoDB URI:', MONGODB_URI ? 'Configured ✅' : 'Missing ❌');
+console.log('Starting server...');
+console.log('Port:', PORT);
+console.log('CORS Origin:', process.env.CORS_ORIGIN ||'http://localhost:3000');
+console.log('MongoDB URI:', MONGODB_URI ? 'Configured' : 'Missing');
 
 // MongoDB connection
 mongoose.connect(MONGODB_URI)
   .then(() => {
-    console.log('✅ MongoDB connected successfully');
+    console.log('MongoDB connected successfully');
   })
   .catch((err) => {
-    console.error('❌ MongoDB connection error:', err.message);
+    console.error('MongoDB connection error:', err.message);
     process.exit(1);
   });
 
@@ -69,35 +79,50 @@ app.use('/api/attendance', attendanceRoutes);
 const server = http.createServer(app);
 const io = new SocketIOServer(server, { 
   cors: { 
-    origin: process.env.CORS_ORIGIN || '*',
+    origin: (origin: string | undefined, callback: (error: Error | null, allow?: boolean) => void) => {
+      const allowedOrigins = process.env.CORS_ORIGIN?.split(',') || ['*'];
+      
+      // Allow requests with no origin
+      if (!origin) return callback(null, true);
+      
+      // If CORS_ORIGIN is '*', allow all origins
+      if (allowedOrigins.includes('*')) return callback(null, true);
+      
+      // Check if the origin is in the allowed list
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      } else {
+        return callback(new Error('Not allowed by CORS'));
+      }
+    },
     credentials: true
   } 
 });
 app.set('io', io);
 
 server.listen(PORT, () => {
-  console.log(`🎉 Server running successfully on port ${PORT}`);
-  console.log(`🔗 Health check: http://localhost:${PORT}/api/health`);
+  console.log(`Server running successfully on port ${PORT}`);
+  console.log(`Health check: http://localhost:${PORT}/api/health`);
 });
 
 // Handle graceful shutdown
 process.on('SIGTERM', () => {
-  console.log('🛑 SIGTERM received, shutting down gracefully...');
+  console.log('SIGTERM received, shutting down gracefully...');
   server.close(() => {
-    console.log('✅ Server closed');
+    console.log('Server closed');
     mongoose.connection.close().then(() => {
-      console.log('✅ MongoDB connection closed');
+      console.log('MongoDB connection closed');
       process.exit(0);
     });
   });
 });
 
 process.on('unhandledRejection', (reason, promise) => {
-  console.error('❌ Unhandled Rejection at:', promise, 'reason:', reason);
+  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
   process.exit(1);
 });
 
 process.on('uncaughtException', (error) => {
-  console.error('❌ Uncaught Exception:', error);
+  console.error('Uncaught Exception:', error);
   process.exit(1);
 }); 
