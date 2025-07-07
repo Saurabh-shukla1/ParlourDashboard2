@@ -19,21 +19,50 @@ This guide will help you deploy your Parlour Management System (Backend API + Fr
 
 ## Step 2: Deploy Backend API
 
-### Option A: Railway (Recommended)
+### Option A: Render (Most Reliable for Monorepos)
+
+1. Go to [Render](https://render.com)
+2. Sign up with GitHub
+3. Click "New" → "Web Service"
+4. Connect your GitHub repository
+5. **Important Settings:**
+   - **Name**: `parlour-backend-api`
+   - **Root Directory**: `backend-parlour-api`
+   - **Environment**: `Node`
+   - **Build Command**: `npm install && npm run build`
+   - **Start Command**: `npm start`
+6. **Environment Variables** (click "Advanced"):
+   ```
+   PORT=10000
+   NODE_ENV=production
+   MONGODB_URI=your_mongodb_atlas_connection_string
+   JWT_SECRET=your_super_secret_jwt_key_minimum_32_chars
+   CORS_ORIGIN=*
+   ```
+7. Click "Create Web Service"
+8. Wait for deployment and get your URL
+
+### Option B: Railway (Updated for Current Interface)
+
+**Railway has changed their interface. Here's the current process:**
 
 1. Go to [Railway](https://railway.app)
 2. Sign up with GitHub
 3. Click "New Project" → "Deploy from GitHub repo"
 4. Select your repository
-5. Railway will auto-detect your services. If it detects multiple services:
-   - Select the backend service
-   - Or manually set Root Directory to: `backend-parlour-api`
-6. **If Railway doesn't show folder options:**
-   - After connecting the repo, go to Settings → General
-   - Set "Root Directory" to: `backend-parlour-api`
-   - Set "Build Command" to: `npm run build`
-   - Set "Start Command" to: `npm start`
-7. Set environment variables in Settings → Variables:
+5. **Railway will now show detected services/folders automatically**
+6. **If it shows multiple services:**
+   - Look for a service called "backend-parlour-api" and select it
+   - If not detected, continue to step 7
+7. **If Railway deploys the wrong folder or fails:**
+   - Go to your project dashboard
+   - Click on the service/deployment
+   - Look for "Settings" or "Configuration" tab
+   - Find "Source" or "Build" settings
+   - Look for "Root Directory" or "Working Directory" field
+   - Set it to: `backend-parlour-api`
+8. **Alternative: Add a nixpacks.toml file (see troubleshooting below)**
+9. Set environment variables in Variables tab:
    ```
    PORT=3001
    NODE_ENV=production
@@ -41,9 +70,9 @@ This guide will help you deploy your Parlour Management System (Backend API + Fr
    JWT_SECRET=your_super_secret_jwt_key_minimum_32_chars
    CORS_ORIGIN=*
    ```
-8. Deploy and get your backend URL (e.g., `https://your-app.railway.app`)
+10. Deploy and get your backend URL (e.g., `https://your-app.railway.app`)
 
-### Option B: Render
+### Option B: Railway (Updated for Current Interface)
 
 1. Go to [Render](https://render.com)
 2. Sign up with GitHub
@@ -210,24 +239,43 @@ If Railway is giving you trouble, Render is often easier for monorepos:
 
 ### If Railway doesn't detect your backend folder:
 
-**Method 1: Manual Configuration**
-1. Deploy the repo normally (it might fail initially)
-2. Go to your project → Settings → General
-3. Set "Root Directory": `backend-parlour-api`
-4. Redeploy
+**Method 1: Create nixpacks.toml file**
+Create this file in your backend folder to help Railway detect it:
 
-**Method 2: Create a separate repository**
-1. Create a new GitHub repository for just the backend
-2. Copy the `backend-parlour-api` folder contents to the new repo
-3. Deploy the new repository
+1. Create `backend-parlour-api/nixpacks.toml`:
+```toml
+[phases.build]
+cmds = ["npm install", "npm run build"]
 
-**Method 3: Use Railway CLI**
+[phases.start]
+cmd = "npm start"
+
+[variables]
+NODE_ENV = "production"
+```
+
+**Method 2: Use Railway CLI (Most Reliable)**
 ```bash
+# Install Railway CLI
 npm install -g @railway/cli
-railway login
+
+# Navigate to backend folder
 cd backend-parlour-api
+
+# Login and deploy
+railway login
 railway deploy
 ```
+
+**Method 3: Create separate repository**
+1. Create a new GitHub repository for just the backend
+2. Copy the `backend-parlour-api` folder contents to the new repo
+3. Deploy the new repository on Railway
+
+**Method 4: Use Railway Templates**
+1. In Railway, look for "Templates"
+2. Search for "Node.js" or "Express" template
+3. Connect your GitHub repo during template setup
 
 ## Monitoring and Maintenance
 
