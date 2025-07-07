@@ -1,6 +1,8 @@
 "use client";
 import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { io, Socket } from "socket.io-client";
+import { Button } from "@/components/ui/button";
 import { API_BASE_URL, SOCKET_URL } from "@/lib/config";
 
 interface AttendanceLog {
@@ -16,6 +18,7 @@ export default function AttendanceSection() {
   const [logs, setLogs] = useState<AttendanceLog[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const router = useRouter();
 
   const fetchLogs = async () => {
     setLoading(true);
@@ -78,6 +81,14 @@ export default function AttendanceSection() {
           </table>
         </div>
       )}
+      <div className="mt-6 text-left">
+        <Button 
+          onClick={() => router.push('/attendance')}
+          className="bg-blue-600 hover:bg-blue-700 text-white"
+        >
+          Go to Attendance Page
+        </Button>
+      </div>
     </div>
   );
 } 
