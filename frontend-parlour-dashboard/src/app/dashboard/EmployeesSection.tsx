@@ -29,7 +29,7 @@ export default function EmployeesSection() {
     setError("");
     const token = localStorage.getItem("token");
     try {
-      const res = await fetch(`${API_BASE_URL}/employees`, {
+      const res = await fetch(`${API_BASE_URL}/api/employees`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -64,7 +64,7 @@ export default function EmployeesSection() {
     setError("");
     const token = localStorage.getItem("token");
     try {
-      const res = await fetch(`${API_BASE_URL}/employees`, {
+      const res = await fetch(`${API_BASE_URL}/api/employees`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -93,7 +93,7 @@ export default function EmployeesSection() {
     setError("");
     const token = localStorage.getItem("token");
     try {
-      const res = await fetch(`${API_BASE_URL}/employees/${editEmployee._id}`, {
+      const res = await fetch(`${API_BASE_URL}/api/employees/${editEmployee._id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -123,7 +123,7 @@ export default function EmployeesSection() {
     setError("");
     const token = localStorage.getItem("token");
     try {
-      const res = await fetch(`${API_BASE_URL}/employees/${deleteEmployee._id}`, {
+      const res = await fetch(`${API_BASE_URL}/api/employees/${deleteEmployee._id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });

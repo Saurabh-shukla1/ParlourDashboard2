@@ -39,8 +39,8 @@ export default function TasksSection() {
     const token = localStorage.getItem("token");
     try {
       const [tasksRes, employeesRes] = await Promise.all([
-        fetch(`${API_BASE_URL}/tasks`, { headers: { Authorization: `Bearer ${token}` } }),
-        fetch(`${API_BASE_URL}/employees`, { headers: { Authorization: `Bearer ${token}` } }),
+        fetch(`${API_BASE_URL}/api/tasks`, { headers: { Authorization: `Bearer ${token}` } }),
+        fetch(`${API_BASE_URL}/api/employees`, { headers: { Authorization: `Bearer ${token}` } }),
       ]);
       const tasksData = await tasksRes.json();
       const employeesData = await employeesRes.json();
@@ -73,7 +73,7 @@ export default function TasksSection() {
     setError("");
     const token = localStorage.getItem("token");
     try {
-      const res = await fetch(`${API_BASE_URL}/tasks`, {
+      const res = await fetch(`${API_BASE_URL}/api/tasks`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -102,7 +102,7 @@ export default function TasksSection() {
     setError("");
     const token = localStorage.getItem("token");
     try {
-      const res = await fetch(`${API_BASE_URL}/tasks/${editTask._id}`, {
+      const res = await fetch(`${API_BASE_URL}/api/tasks/${editTask._id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -132,7 +132,7 @@ export default function TasksSection() {
     setError("");
     const token = localStorage.getItem("token");
     try {
-      const res = await fetch(`${API_BASE_URL}/tasks/${deleteTask._id}`, {
+      const res = await fetch(`${API_BASE_URL}/api/tasks/${deleteTask._id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });
