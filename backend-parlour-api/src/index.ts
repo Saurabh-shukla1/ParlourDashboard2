@@ -17,23 +17,9 @@ dotenv.config();
 const app = express();
 
 // CORS configuration
+const corsOrigin = process.env.CORS_ORIGIN || '*';
 const corsOptions = {
-  origin: (origin: string | undefined, callback: (error: Error | null, allow?: boolean) => void) => {
-    const allowedOrigins = process.env.CORS_ORIGIN?.split(',') || ['*'];
-    
-    // Allow requests with no origin (like mobile apps or curl requests)
-    if (!origin) return callback(null, true);
-    
-    // If CORS_ORIGIN is '*', allow all origins
-    if (allowedOrigins.includes('*')) return callback(null, true);
-    
-    // Check if the origin is in the allowed list
-    if (allowedOrigins.includes(origin)) {
-      return callback(null, true);
-    } else {
-      return callback(new Error('Not allowed by CORS'));
-    }
-  },
+  origin: corsOrigin === '*' ? true : corsOrigin.split(',').map(o => o.trim()),
   credentials: true,
   optionsSuccessStatus: 200
 };
@@ -77,24 +63,10 @@ app.use('/api/tasks', taskRoutes);
 app.use('/api/attendance', attendanceRoutes);
 
 const server = http.createServer(app);
+const corsOriginSocket = process.env.CORS_ORIGIN || '*';
 const io = new SocketIOServer(server, { 
   cors: { 
-    origin: (origin: string | undefined, callback: (error: Error | null, allow?: boolean) => void) => {
-      const allowedOrigins = process.env.CORS_ORIGIN?.split(',') || ['*'];
-      
-      // Allow requests with no origin
-      if (!origin) return callback(null, true);
-      
-      // If CORS_ORIGIN is '*', allow all origins
-      if (allowedOrigins.includes('*')) return callback(null, true);
-      
-      // Check if the origin is in the allowed list
-      if (allowedOrigins.includes(origin)) {
-        return callback(null, true);
-      } else {
-        return callback(new Error('Not allowed by CORS'));
-      }
-    },
+    origin: corsOriginSocket === '*' ? true : corsOriginSocket.split(',').map(o => o.trim()),
     credentials: true
   } 
 });
