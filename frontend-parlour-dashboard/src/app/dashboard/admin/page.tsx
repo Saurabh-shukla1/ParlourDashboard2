@@ -1,35 +1,28 @@
 "use client";
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useAuth } from "@/hooks/useAuth";
 import EmployeesSection from "../EmployeesSection";
 import TasksSection from "../TasksSection";
 import AttendanceSection from "../AttendanceSection";
 
 export default function AdminDashboardPage() {
-  const router = useRouter();
-  const [user, setUser] = useState<{ name: string; role: string } | null>(null);
+  const { user, loading, logout } = useAuth("admin");
 
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      router.replace("/login");
-      return;
-    }
-    try {
-      const payload = JSON.parse(atob(token.split(".")[1]));
-      if (payload.role !== "admin") {
-        router.replace(`/dashboard/${payload.role}`);
-      } else {
-        setUser({ name: payload.name || "Admin", role: payload.role });
-      }
-    } catch {
-      router.replace("/login");
-    }
-  }, [router]);
+  // Show loading while checking authentication
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+        <div className="text-white">Loading...</div>
+      </div>
+    );
+  }
+
+  // Don't render anything if user is null (redirecting)
+  if (!user) {
+    return null;
+  }
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    router.replace("/login");
+    logout();
   };
 
   return (

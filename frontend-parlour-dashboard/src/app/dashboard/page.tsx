@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from "react";
+import { useAuthRedirect } from "@/hooks/useAuth";
 import EmployeesSection from "./EmployeesSection";
 import TasksSection from "./TasksSection";
 import AttendanceSection from "./AttendanceSection";
@@ -12,6 +13,9 @@ const tabs = [
 
 export default function DashboardPage() {
   const [selectedTab, setSelectedTab] = useState("employees");
+  
+  // This will redirect users to their role-specific dashboard
+  useAuthRedirect();
 
   return (
     <div className="min-h-screen bg-gray-900 text-gray-100 p-6">
