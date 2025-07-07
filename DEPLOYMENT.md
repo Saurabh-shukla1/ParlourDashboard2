@@ -29,7 +29,7 @@ This guide will help you deploy your Parlour Management System (Backend API + Fr
    - **Name**: `parlour-backend-api`
    - **Root Directory**: `backend-parlour-api`
    - **Environment**: `Node`
-   - **Build Command**: `npm ci --production=false && npm run build`
+   - **Build Command**: `npm install && npm run build`
    - **Start Command**: `npm start`
    - **Node Version**: `18` (recommended)
 6. **Environment Variables** (click "Advanced"):
@@ -81,7 +81,7 @@ This guide will help you deploy your Parlour Management System (Backend API + Fr
 4. Connect your GitHub repository
 5. Set:
    - Root Directory: `backend-parlour-api`
-   - Build Command: `npm ci --production=false && npm run build`
+   - Build Command: `npm install && npm run build`
    - Start Command: `npm start`
 6. Add environment variables (same as Railway)
 7. Deploy and get your backend URL
@@ -191,32 +191,34 @@ npm run build
 npm start
 ```
 
-## Important Note: package-lock.json Issue
+## Important Note: TypeScript Build Issues
 
-Since `package-lock.json` was removed from the repository, you might encounter deployment issues. Here are the solutions:
+Since your backend uses TypeScript, deployment platforms need to install devDependencies to build the project. Here are the correct solutions:
 
-### Solution 1: Use npm ci with --production=false
-This ensures all dependencies (including devDependencies) are installed:
+### Solution 1: Use npm install (Recommended)
+This ensures all dependencies (including devDependencies like TypeScript) are installed:
 ```bash
-npm ci --production=false && npm run build
+npm install && npm run build
 ```
 
-### Solution 2: Re-generate package-lock.json locally
-If deployments keep failing, regenerate the lock file:
-```bash
-cd backend-parlour-api
-rm -rf node_modules
-npm install
-git add package-lock.json
-git commit -m "Add package-lock.json for deployment"
-git push
-```
-
-### Solution 3: Alternative Build Commands
-Try these if the above doesn't work:
+### Solution 2: Alternative Build Commands
+If the above doesn't work, try these:
+- `npm ci && npm run build` (if package-lock.json exists)
 - `npm install --legacy-peer-deps && npm run build`
 - `npm install --force && npm run build`
-- `npm install && npm run build` (basic fallback)
+
+### Solution 3: Two-stage approach
+Some platforms support this pattern:
+```bash
+# Install all dependencies
+npm install
+# Build the project
+npm run build
+# Start the server
+npm start
+```
+
+**Note**: Removed the problematic `postinstall` script that was causing build failures.
 
 ## Alternative Deployment Options
 
@@ -250,7 +252,7 @@ If Railway is giving you trouble, Render is often easier for monorepos:
    - **Name**: `parlour-backend-api`
    - **Root Directory**: `backend-parlour-api`
    - **Environment**: `Node`
-   - **Build Command**: `npm ci --production=false && npm run build`
+   - **Build Command**: `npm install && npm run build`
    - **Start Command**: `npm start`
 6. **Environment Variables** (click "Advanced"):
    ```

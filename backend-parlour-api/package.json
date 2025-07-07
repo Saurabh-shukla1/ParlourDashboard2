@@ -7,8 +7,7 @@
     "start": "node dist/index.js",
     "dev": "nodemon src/index.ts",
     "build": "tsc",
-    "start:prod": "npm run build && node dist/index.js",
-    "postinstall": "npm run build"
+    "start:prod": "npm run build && node dist/index.js"
   },
   "keywords": [],
   "author": "",
