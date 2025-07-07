@@ -4,7 +4,7 @@ node_modules/
 **/node_modules/
 
 # Package manager files
-package-lock.json
+# package-lock.json (commented out - needed for deployment)
 yarn.lock
 pnpm-lock.yaml
 

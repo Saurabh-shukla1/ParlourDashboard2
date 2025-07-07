@@ -29,8 +29,9 @@ This guide will help you deploy your Parlour Management System (Backend API + Fr
    - **Name**: `parlour-backend-api`
    - **Root Directory**: `backend-parlour-api`
    - **Environment**: `Node`
-   - **Build Command**: `npm install && npm run build`
+   - **Build Command**: `npm ci --production=false && npm run build`
    - **Start Command**: `npm start`
+   - **Node Version**: `18` (recommended)
 6. **Environment Variables** (click "Advanced"):
    ```
    PORT=10000
@@ -80,7 +81,7 @@ This guide will help you deploy your Parlour Management System (Backend API + Fr
 4. Connect your GitHub repository
 5. Set:
    - Root Directory: `backend-parlour-api`
-   - Build Command: `npm install && npm run build`
+   - Build Command: `npm ci --production=false && npm run build`
    - Start Command: `npm start`
 6. Add environment variables (same as Railway)
 7. Deploy and get your backend URL
@@ -190,6 +191,33 @@ npm run build
 npm start
 ```
 
+## Important Note: package-lock.json Issue
+
+Since `package-lock.json` was removed from the repository, you might encounter deployment issues. Here are the solutions:
+
+### Solution 1: Use npm ci with --production=false
+This ensures all dependencies (including devDependencies) are installed:
+```bash
+npm ci --production=false && npm run build
+```
+
+### Solution 2: Re-generate package-lock.json locally
+If deployments keep failing, regenerate the lock file:
+```bash
+cd backend-parlour-api
+rm -rf node_modules
+npm install
+git add package-lock.json
+git commit -m "Add package-lock.json for deployment"
+git push
+```
+
+### Solution 3: Alternative Build Commands
+Try these if the above doesn't work:
+- `npm install --legacy-peer-deps && npm run build`
+- `npm install --force && npm run build`
+- `npm install && npm run build` (basic fallback)
+
 ## Alternative Deployment Options
 
 ### Docker Deployment (Advanced)
@@ -222,7 +250,7 @@ If Railway is giving you trouble, Render is often easier for monorepos:
    - **Name**: `parlour-backend-api`
    - **Root Directory**: `backend-parlour-api`
    - **Environment**: `Node`
-   - **Build Command**: `npm install && npm run build`
+   - **Build Command**: `npm ci --production=false && npm run build`
    - **Start Command**: `npm start`
 6. **Environment Variables** (click "Advanced"):
    ```
