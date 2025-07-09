@@ -17,9 +17,27 @@ const app = express();
 // CORS configuration
 const corsOrigin = process.env.CORS_ORIGIN || '*';
 const corsOptions = {
-  origin: corsOrigin === '*' ? true : corsOrigin.split(',').map(o => o.trim()),
+  origin: function (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    if (corsOrigin === '*') {
+      return callback(null, true);
+    }
+    
+    const allowedOrigins = corsOrigin.split(',').map(o => o.trim());
+    
+    // Check if the origin is in the allowed list or if it's a Vercel preview URL
+    if (allowedOrigins.includes(origin) || origin.includes('vercel.app')) {
+      return callback(null, true);
+    }
+    
+    return callback(new Error('Not allowed by CORS'), false);
+  },
   credentials: true,
-  optionsSuccessStatus: 200
+  optionsSuccessStatus: 200,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 };
 
 app.use(cors(corsOptions));
@@ -79,11 +97,28 @@ app.use('/api/tasks', taskRoutes);
 app.use('/api/attendance', attendanceRoutes);
 
 const server = http.createServer(app);
-const corsOriginSocket = process.env.CORS_ORIGIN || '*';
 const io = new SocketIOServer(server, { 
   cors: { 
-    origin: corsOriginSocket === '*' ? true : corsOriginSocket.split(',').map(o => o.trim()),
-    credentials: true
+    origin: function (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) {
+      // Allow requests with no origin (like mobile apps)
+      if (!origin) return callback(null, true);
+      
+      const corsOrigin = process.env.CORS_ORIGIN || '*';
+      if (corsOrigin === '*') {
+        return callback(null, true);
+      }
+      
+      const allowedOrigins = corsOrigin.split(',').map(o => o.trim());
+      
+      // Check if the origin is in the allowed list or if it's a Vercel preview URL
+      if (allowedOrigins.includes(origin) || origin.includes('vercel.app')) {
+        return callback(null, true);
+      }
+      
+      return callback(new Error('Not allowed by CORS'), false);
+    },
+    credentials: true,
+    methods: ['GET', 'POST']
   } 
 });
 app.set('io', io);
