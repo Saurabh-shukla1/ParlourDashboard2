@@ -1,5 +1,3 @@
-"console.log('Backend API running');" 
-
 import express from 'express';
 import cors from 'cors';
 import mongoose from 'mongoose';
@@ -25,7 +23,20 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-app.use(express.json());
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// Security headers for production
+if (process.env.NODE_ENV === 'production') {
+  app.set('trust proxy', 1);
+  app.use((req, res, next) => {
+    res.header('X-Content-Type-Options', 'nosniff');
+    res.header('X-Frame-Options', 'DENY');
+    res.header('X-XSS-Protection', '1; mode=block');
+    res.header('Referrer-Policy', 'strict-origin-when-cross-origin');
+    next();
+  });
+}
 
 const PORT = process.env.PORT || 5001;
 const MONGODB_URI = process.env.MONGODB_URI || '';
@@ -34,6 +45,11 @@ const MONGODB_URI = process.env.MONGODB_URI || '';
 if (!MONGODB_URI) {
   console.error('MONGODB_URI environment variable is required');
   console.error('Please set MONGODB_URI in your environment variables');
+  process.exit(1);
+}
+
+if (!process.env.JWT_SECRET || process.env.JWT_SECRET === 'your-super-secret-jwt-key-change-this-in-production') {
+  console.error('JWT_SECRET environment variable is required and must be changed from default');
   process.exit(1);
 }
 

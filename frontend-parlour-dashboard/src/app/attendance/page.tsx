@@ -12,7 +12,7 @@ interface Employee {
 
 interface AttendanceLog {
   _id: string;
-  employee: Employee;
+  employee: Employee | null;
   type: "in" | "out";
   timestamp: string;
 }
@@ -65,7 +65,7 @@ export default function AttendancePage() {
 
   // Get last punch type for employee
   const getLastType = (empId: string) => {
-    const log = logs.find((l) => l.employee._id === empId);
+    const log = logs.find((l) => l.employee?._id === empId);
     return log?.type || "out";
   };
 
@@ -87,7 +87,8 @@ export default function AttendancePage() {
       if (!res.ok) setError(data.message || "Failed to punch");
       else {
         // Optimistically update logs for instant UI feedback
-        setLogs((prev) => [{ ...data, employee: employees.find(e => e._id === empId) }, ...prev]);
+        const employee = employees.find(e => e._id === empId) || null;
+        setLogs((prev) => [{ ...data, employee }, ...prev]);
       }
       // log will also be added via WebSocket, but this makes UI instant
     } catch {
